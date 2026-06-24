@@ -40,6 +40,7 @@ export function InstanceOIDCConfigForm(props: Props) {
       OIDC_CLIENT_SECRET: config["OIDC_CLIENT_SECRET"],
       OIDC_DISCOVERY_URL: config["OIDC_DISCOVERY_URL"],
       OIDC_DISPLAY_NAME: config["OIDC_DISPLAY_NAME"] || "SSO",
+      OIDC_ICON_URL: config["OIDC_ICON_URL"] || "",
     },
   });
 
@@ -79,6 +80,15 @@ export function InstanceOIDCConfigForm(props: Props) {
       required: true,
     },
     {
+      key: "OIDC_ICON_URL",
+      type: "text",
+      label: "Icon URL",
+      description: <>Optional URL to a custom icon for the login button. Leave empty to use the default OpenID logo.</>,
+      placeholder: "https://your-domain.com/icon.png",
+      error: Boolean(errors.OIDC_ICON_URL),
+      required: false,
+    },
+    {
       key: "OIDC_DISPLAY_NAME",
       type: "text",
       label: "Display Name",
@@ -116,6 +126,7 @@ export function InstanceOIDCConfigForm(props: Props) {
         OIDC_CLIENT_SECRET: response.find((item) => item.key === "OIDC_CLIENT_SECRET")?.value,
         OIDC_DISCOVERY_URL: response.find((item) => item.key === "OIDC_DISCOVERY_URL")?.value,
         OIDC_DISPLAY_NAME: response.find((item) => item.key === "OIDC_DISPLAY_NAME")?.value,
+        OIDC_ICON_URL: response.find((item) => item.key === "OIDC_ICON_URL")?.value,
       });
     } catch (err) {
       console.error(err);

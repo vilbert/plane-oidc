@@ -142,6 +142,12 @@ oidc_config_variables = [
         "category": "OIDC",
         "is_encrypted": False,
     },
+    {
+        "key": "OIDC_ICON_URL",
+        "value": os.environ.get("OIDC_ICON_URL", ""),
+        "category": "OIDC",
+        "is_encrypted": False,
+    },
 ]
 gitea_config_variables = [
     {

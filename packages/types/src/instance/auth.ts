@@ -56,7 +56,8 @@ export type TInstanceOIDCAuthenticationConfigurationKeys =
   | "OIDC_CLIENT_ID"
   | "OIDC_CLIENT_SECRET"
   | "OIDC_DISCOVERY_URL"
-  | "OIDC_DISPLAY_NAME";
+  | "OIDC_DISPLAY_NAME"
+  | "OIDC_ICON_URL";
 
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys

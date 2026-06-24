@@ -83,8 +83,8 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
     },
     {
       id: "oidc",
-      text: `${oauthActionText} with SSO`,
-      icon: <img src={oidcLogo} height={18} width={18} alt="SSO Logo" />,
+      text: `${oauthActionText} with ${config?.oidc_display_name || "SSO"}`,
+      icon: <img src={config?.oidc_icon_url || oidcLogo} height={18} width={18} alt="SSO Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
       },

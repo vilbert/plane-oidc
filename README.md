@@ -45,6 +45,51 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 
 `Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
 
+## 🔐 OIDC / SSO Support (This Fork)
+
+This is a fork of [Plane](https://github.com/makeplane/plane) that adds **OpenID Connect (OIDC) / SSO authentication** support to the Community Edition.
+
+### What's added
+- OIDC login button on the Plane login page
+- OIDC configuration page in God Mode (`/god-mode/authentication/oidc/`)
+- Works with any OIDC-compliant provider (Authentik, Keycloak, Nextcloud, etc.)
+
+### Docker images
+Pre-built images are available on GitHub Container Registry:
+
+| Service | Image |
+|---|---|
+| Backend | `ghcr.io/jiyang1018/plane-backend-oidc:preview` |
+| Web | `ghcr.io/jiyang1018/plane-web-oidc:preview` |
+| Admin | `ghcr.io/jiyang1018/plane-admin-oidc:preview` |
+| Space | `ghcr.io/jiyang1018/plane-space-oidc:preview` |
+| Live | `ghcr.io/jiyang1018/plane-live-oidc:preview` |
+
+Use the official `makeplane` images for proxy, db, redis, minio, and mq.
+
+### Setup
+1. Deploy Plane using the standard docker-compose setup
+2. Replace the `makeplane/*` images with the `ghcr.io/jiyang1018/*` images above
+3. Go to `https://your-plane-domain/god-mode/authentication/oidc/`
+4. Fill in your OIDC provider details:
+   - **Discovery URL**: your provider's `.well-known/openid-configuration` URL
+   - **Client ID**: from your OIDC provider
+   - **Client Secret**: from your OIDC provider
+   - **Display Name**: shown on the login button (e.g. "SSO" or "Authentik")
+5. Enable the toggle and save
+6. Add the callback URL to your OIDC provider: `https://your-plane-domain/auth/oidc/callback/`
+
+### NAT hairpinning
+If your OIDC provider is self-hosted on the same network as Plane, add `extra_hosts` to the backend services in docker-compose:
+```yaml
+    extra_hosts:
+      - "your-oidc-domain.com:your-server-ip"
+```
+
+### Tested with
+- Authentik
+- Nextcloud (with OIDC provider app)
+
 ## 🌟 Features
 
 - **Work Items**

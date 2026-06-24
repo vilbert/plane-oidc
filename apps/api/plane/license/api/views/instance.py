@@ -56,6 +56,8 @@ class InstanceEndpoint(BaseAPIView):
             IS_GITLAB_ENABLED,
             IS_GITEA_ENABLED,
             IS_OIDC_ENABLED,
+            OIDC_ICON_URL,
+            OIDC_DISPLAY_NAME,
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
@@ -98,6 +100,14 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "IS_OIDC_ENABLED",
                     "default": os.environ.get("IS_OIDC_ENABLED", "0"),
                 },
+                {
+                    "key": "OIDC_ICON_URL",
+                    "default": os.environ.get("OIDC_ICON_URL", ""),
+                },
+                {
+                    "key": "OIDC_DISPLAY_NAME",
+                    "default": os.environ.get("OIDC_DISPLAY_NAME", "SSO"),
+                },
                 {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",
@@ -139,6 +149,9 @@ class InstanceEndpoint(BaseAPIView):
         data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
         data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
         data["is_oidc_enabled"] = IS_OIDC_ENABLED == "1"
+        data["oidc_icon_url"] = OIDC_ICON_URL or ""
+        data["oidc_display_name"] = OIDC_DISPLAY_NAME or "SSO"
+        data["oidc_display_name"] = OIDC_DISPLAY_NAME or "SSO"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
 
