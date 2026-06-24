@@ -34,7 +34,7 @@ jobs:
           context: ./apps/api
           file: ./apps/api/Dockerfile.api
           push: true
-          tags: ghcr.io/jiyang1018/plane-oidc-backend:preview
+          tags: ghcr.io/jiyang1018/plane-backend-oidc:preview
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -61,7 +61,7 @@ jobs:
           context: .
           file: ./apps/web/Dockerfile.web
           push: true
-          tags: ghcr.io/jiyang1018/plane-oidc-web:preview
+          tags: ghcr.io/jiyang1018/plane-web-oidc:preview
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -88,7 +88,7 @@ jobs:
           context: .
           file: ./apps/admin/Dockerfile.admin
           push: true
-          tags: ghcr.io/jiyang1018/plane-oidc-admin:preview
+          tags: ghcr.io/jiyang1018/plane-admin-oidc:preview
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -115,7 +115,7 @@ jobs:
           context: .
           file: ./apps/space/Dockerfile.space
           push: true
-          tags: ghcr.io/jiyang1018/plane-oidc-space:preview
+          tags: ghcr.io/jiyang1018/plane-space-oidc:preview
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -142,6 +142,6 @@ jobs:
           context: .
           file: ./apps/live/Dockerfile.live
           push: true
-          tags: ghcr.io/jiyang1018/plane-oidc-live:preview
+          tags: ghcr.io/jiyang1018/plane-live-oidc:preview
           cache-from: type=gha
           cache-to: type=gha,mode=max
