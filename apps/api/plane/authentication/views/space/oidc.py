@@ -11,7 +11,11 @@ from django.http import HttpResponseRedirect
 from django.views import View
 
 # Module imports
-from plane.authentication.provider.oauth.oidcimport OIDC_OAUTH_PROVIDER_ERROR
+from plane.authentication.provider.oauth.oidc import OIDCOAuthProvider
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
+)
 from plane.authentication.utils.login import user_login
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
