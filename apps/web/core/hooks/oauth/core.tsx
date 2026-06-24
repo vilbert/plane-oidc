@@ -73,6 +73,15 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
       enabled: config?.is_gitlab_enabled,
     },
     {
+      id: "gitea",
+      text: `${oauthActionText} with Gitea`,
+      icon: <img src={giteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitea_enabled,
+    },
+    {
       id: "oidc",
       text: `${oauthActionText} with SSO`,
       icon: <img src={oidcLogo} height={18} width={18} alt="SSO Logo" />,
@@ -80,13 +89,6 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
         window.location.assign(`${API_BASE_URL}/auth/oidc/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_oidc_enabled,
-    },
-      text: `${oauthActionText} with Gitea`,
-      icon: <img src={giteaLogo} height={18} width={18} alt="Gitea Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_gitea_enabled,
     },
   ];
 
