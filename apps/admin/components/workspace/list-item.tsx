@@ -16,6 +16,7 @@ import { useWorkspace } from "@/hooks/store";
 import { useInstance } from "@/hooks/store";
 type TWorkspaceListItemProps = {
   workspaceId: string;
+  isWorkspaceCreationDisabled: boolean;
 };
 
 export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
@@ -101,19 +102,21 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </div>
       </div>
       <div className="flex items-center gap-3 flex-shrink-0">
-        <div
-          onClick={handleAutoJoinToggle}
-          className="flex items-center gap-1.5 text-11 cursor-pointer"
-          title={isAutoJoin ? "Disable auto-join" : "Enable auto-join for new users"}
-        >
-          <input
-            type="checkbox"
-            checked={isAutoJoin}
-            onChange={() => {}}
-            className="h-3.5 w-3.5 cursor-pointer accent-accent-primary"
-          />
-          <span className="text-secondary">Auto Join</span>
-        </div>
+        {isWorkspaceCreationDisabled && (
+          <div
+            onClick={handleAutoJoinToggle}
+            className="flex items-center gap-1.5 text-11 cursor-pointer"
+            title={isAutoJoin ? "Disable auto-join" : "Enable auto-join for new users"}
+          >
+            <input
+              type="checkbox"
+              checked={isAutoJoin}
+              onChange={() => {}}
+              className="h-3.5 w-3.5 cursor-pointer accent-accent-primary"
+            />
+            <span className="text-secondary">Auto Join</span>
+          </div>
+        )}
         <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>

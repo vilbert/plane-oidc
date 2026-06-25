@@ -137,7 +137,11 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
             </div>
             <div className="flex flex-col gap-4 py-2">
               {workspaceIds.map((workspaceId) => (
-                <WorkspaceListItem key={workspaceId} workspaceId={workspaceId} />
+                <WorkspaceListItem
+                  key={workspaceId}
+                  workspaceId={workspaceId}
+                  isWorkspaceCreationDisabled={Boolean(parseInt(disableWorkspaceCreation))}
+                />
               ))}
             </div>
             {hasNextPage && (
