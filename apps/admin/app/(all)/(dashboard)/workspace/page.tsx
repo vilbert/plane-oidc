@@ -135,7 +135,13 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 </Link>
               </div>
             </div>
-            <div className="flex flex-col gap-4 py-2">
+            <div className="flex flex-col gap-2 py-2">
+              <div className="flex items-center gap-3 px-1 pb-1 border-b border-subtle">
+                <div className="flex-1 text-11 font-medium text-secondary">Current Workspaces</div>
+                <div className={`text-11 font-medium w-20 text-center ${!Boolean(parseInt(disableWorkspaceCreation)) ? "opacity-30" : "text-secondary"}`}>
+                  Auto Assign
+                </div>
+              </div>
               {workspaceIds.map((workspaceId) => (
                 <WorkspaceListItem
                   key={workspaceId}
