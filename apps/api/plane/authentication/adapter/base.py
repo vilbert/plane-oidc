@@ -99,6 +99,27 @@ class Adapter:
             )
         return
 
+    def __auto_join_default_workspace(self, user):
+        try:
+            from plane.db.models import Workspace, WorkspaceMember
+            from plane.license.utils.instance_value import get_configuration_value
+            (DEFAULT_WORKSPACE_SLUG,) = get_configuration_value([
+                {"key": "DEFAULT_WORKSPACE_SLUG", "default": ""}
+            ])
+            if not DEFAULT_WORKSPACE_SLUG:
+                return
+            workspace = Workspace.objects.filter(slug=DEFAULT_WORKSPACE_SLUG).first()
+            if not workspace:
+                return
+            if not WorkspaceMember.objects.filter(workspace=workspace, member=user).exists():
+                WorkspaceMember.objects.create(
+                    workspace=workspace,
+                    member=user,
+                    role=10,  # Member role
+                )
+        except Exception:
+            pass
+
     def __check_signup(self, email):
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
@@ -388,8 +409,10 @@ class Adapter:
             self.callback(user, is_signup, self.request)
 
         # Create or update account if token data is present
-        if self.token_data:
-            self.create_update_account(user=user)
-
-        # Return user
-        return user
+          if self.token_data:
+              self.create_update_account(user=user)
+          # Auto-join default workspace for new OIDC users
+          if is_signup and self.provider == "oidc":
+              self.__auto_join_default_workspace(user=user)
+          # Return user
+          return user

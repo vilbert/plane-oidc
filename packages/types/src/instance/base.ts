@@ -54,6 +54,7 @@ export interface IInstanceConfig {
   is_oidc_enabled: boolean;
   oidc_icon_url: string;
   oidc_display_name: string;
+  default_workspace_slug: string;
   is_magic_login_enabled: boolean;
   is_email_password_enabled: boolean;
   github_app_name: string | undefined;

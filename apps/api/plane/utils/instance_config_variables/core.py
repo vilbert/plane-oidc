@@ -13,6 +13,12 @@ authentication_config_variables = [
         "is_encrypted": False,
     },
     {
+        "key": "DEFAULT_WORKSPACE_SLUG",
+        "value": os.environ.get("DEFAULT_WORKSPACE_SLUG", ""),
+        "category": "AUTHENTICATION",
+        "is_encrypted": False,
+    },
+    {
         "key": "ENABLE_EMAIL_PASSWORD",
         "value": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
         "category": "AUTHENTICATION",
