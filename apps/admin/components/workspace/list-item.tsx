@@ -19,7 +19,7 @@ type TWorkspaceListItemProps = {
   isWorkspaceCreationDisabled: boolean;
 };
 
-export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
+export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId, isWorkspaceCreationDisabled }: TWorkspaceListItemProps) {
   // store hooks
   const { getWorkspaceById } = useWorkspace();
   const { formattedConfig, updateInstanceConfigurations } = useInstance();
