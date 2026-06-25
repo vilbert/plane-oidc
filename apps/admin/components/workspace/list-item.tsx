@@ -5,15 +5,15 @@
  */
 
 import { observer } from "mobx-react";
-
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
 import { NewTabIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-
+import { useInstance } from "@/hooks/store";
 type TWorkspaceListItemProps = {
   workspaceId: string;
 };
@@ -21,10 +21,29 @@ type TWorkspaceListItemProps = {
 export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
   // store hooks
   const { getWorkspaceById } = useWorkspace();
+  const { formattedConfig, updateInstanceConfigurations } = useInstance();
   // derived values
   const workspace = getWorkspaceById(workspaceId);
-
+  const autoJoinSlugs = (formattedConfig?.DEFAULT_WORKSPACE_SLUGS ?? "").split(",").map(s => s.trim()).filter(Boolean);
+  const isAutoJoin = autoJoinSlugs.includes(workspace?.slug ?? "");
   if (!workspace) return null;
+
+  const handleAutoJoinToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let newSlugs: string[];
+    if (isAutoJoin) {
+      newSlugs = autoJoinSlugs.filter(s => s !== workspace.slug);
+    } else {
+      newSlugs = [...autoJoinSlugs, workspace.slug];
+    }
+    await updateInstanceConfigurations({ DEFAULT_WORKSPACE_SLUGS: newSlugs.join(",") });
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: "Saved",
+      message: isAutoJoin ? "Auto-join disabled." : `New users will auto-join ${workspace.name}.`,
+    });
+  };
   return (
     <a
       key={workspaceId}
@@ -81,7 +100,20 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
           </div>
         </div>
       </div>
-      <div className="flex-shrink-0">
+      <div className="flex items-center gap-3 flex-shrink-0">
+        <div
+          onClick={handleAutoJoinToggle}
+          className="flex items-center gap-1.5 text-11 cursor-pointer"
+          title={isAutoJoin ? "Disable auto-join" : "Enable auto-join for new users"}
+        >
+          <input
+            type="checkbox"
+            checked={isAutoJoin}
+            onChange={() => {}}
+            className="h-3.5 w-3.5 cursor-pointer accent-accent-primary"
+          />
+          <span className="text-secondary">Auto Join</span>
+        </div>
         <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
       </div>
     </a>

@@ -13,8 +13,8 @@ authentication_config_variables = [
         "is_encrypted": False,
     },
     {
-        "key": "DEFAULT_WORKSPACE_SLUG",
-        "value": os.environ.get("DEFAULT_WORKSPACE_SLUG", ""),
+        "key": "DEFAULT_WORKSPACE_SLUGS",
+        "value": os.environ.get("DEFAULT_WORKSPACE_SLUGS", ""),
         "category": "AUTHENTICATION",
         "is_encrypted": False,
     },

@@ -103,20 +103,22 @@ class Adapter:
         try:
             from plane.db.models import Workspace, WorkspaceMember
             from plane.license.utils.instance_value import get_configuration_value
-            (DEFAULT_WORKSPACE_SLUG,) = get_configuration_value([
-                {"key": "DEFAULT_WORKSPACE_SLUG", "default": ""}
+            (DEFAULT_WORKSPACE_SLUGS,) = get_configuration_value([
+                {"key": "DEFAULT_WORKSPACE_SLUGS", "default": ""}
             ])
-            if not DEFAULT_WORKSPACE_SLUG:
+            if not DEFAULT_WORKSPACE_SLUGS:
                 return
-            workspace = Workspace.objects.filter(slug=DEFAULT_WORKSPACE_SLUG).first()
-            if not workspace:
-                return
-            if not WorkspaceMember.objects.filter(workspace=workspace, member=user).exists():
-                WorkspaceMember.objects.create(
-                    workspace=workspace,
-                    member=user,
-                    role=10,  # Member role
-                )
+            slugs = [s.strip() for s in DEFAULT_WORKSPACE_SLUGS.split(",") if s.strip()]
+            for slug in slugs:
+                workspace = Workspace.objects.filter(slug=slug).first()
+                if not workspace:
+                    continue
+                if not WorkspaceMember.objects.filter(workspace=workspace, member=user).exists():
+                    WorkspaceMember.objects.create(
+                        workspace=workspace,
+                        member=user,
+                        role=10,
+                    )
         except Exception:
             pass
 

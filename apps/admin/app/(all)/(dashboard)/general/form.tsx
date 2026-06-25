@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
@@ -16,7 +15,7 @@ import { Input, ToggleSwitch } from "@plane/ui";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
-import { useInstance, useWorkspace } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 
 export interface IGeneralConfigurationForm {
   instance: IInstance;
@@ -26,12 +25,7 @@ export interface IGeneralConfigurationForm {
 export const GeneralConfigurationForm = observer(function GeneralConfigurationForm(props: IGeneralConfigurationForm) {
   const { instance, instanceAdmins } = props;
   // hooks
-  const { updateInstanceInfo, formattedConfig, updateInstanceConfigurations } = useInstance();
-  const { workspaces, workspaceIds, fetchWorkspaces } = useWorkspace();
-
-  useEffect(() => {
-    fetchWorkspaces();
-  }, [fetchWorkspaces]);
+  const { updateInstanceInfo } = useInstance();
 
   // form data
   const {
@@ -45,7 +39,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
     },
   });
 
-  const defaultWorkspaceSlug = formattedConfig?.DEFAULT_WORKSPACE_SLUG ?? "";
 
   const onSubmit = async (formData: Partial<IInstance>) => {
     const payload: Partial<IInstance> = { ...formData };
@@ -139,31 +132,6 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               )}
             />
           </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        <div className="border-b border-subtle pb-1.5 text-16 font-medium text-primary">Default workspace for new users</div>
-        <div className="flex flex-col gap-2">
-          <p className="text-13 text-tertiary">New users who sign up via SSO/OIDC will be automatically added to this workspace.</p>
-          <select
-            value={defaultWorkspaceSlug}
-            onChange={async (e) => {
-              await updateInstanceConfigurations({ DEFAULT_WORKSPACE_SLUG: e.target.value });
-              setToast({ type: TOAST_TYPE.SUCCESS, title: "Saved", message: "Default workspace updated." });
-            }}
-            className="w-full max-w-xs rounded-md border border-border-primary bg-layer-1 px-3 py-2 text-sm text-primary outline-none focus:border-accent-primary"
-          >
-            <option value="">— None (don&apos;t auto-join) —</option>
-            {workspaceIds.map((id) => {
-              const ws = workspaces[id];
-              return (
-                <option key={id} value={ws.slug}>
-                  {ws.name} ({ws.slug})
-                </option>
-              );
-            })}
-          </select>
         </div>
       </div>
 
