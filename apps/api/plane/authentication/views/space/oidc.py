@@ -1,40 +1,32 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
-# See the LICENSE file for details.
 
-# Python imports
 import uuid
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
-# Django import
 from django.http import HttpResponseRedirect
 from django.views import View
 
-# Module imports
 from plane.authentication.provider.oauth.oidc import OIDCOAuthProvider
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
 from plane.authentication.utils.login import user_login
+from plane.authentication.utils.redirection_path import get_redirection_path
+from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
 from plane.license.models import Instance
 from plane.authentication.utils.host import base_host
 from plane.authentication.adapter.error import (
-    AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
+    AUTHENTICATION_ERROR_CODES,
 )
 from plane.utils.path_validator import validate_next_path
 
 
 class OIDCOauthInitiateSpaceEndpoint(View):
     def get(self, request):
-        # Get host and next path
         request.session["host"] = base_host(request=request, is_space=True)
         next_path = request.GET.get("next_path")
         if next_path:
             request.session["next_path"] = str(validate_next_path(next_path))
 
-        # Check instance configuration
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             exc = AuthenticationException(
@@ -44,20 +36,19 @@ class OIDCOauthInitiateSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = urljoin(base_host(request=request, is_space=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
-
         try:
             state = uuid.uuid4().hex
-            provider = OIDC_OAUTH_PROVIDER_ERROR(request=request, state=state)
+            provider = OIDCOAuthProvider(request=request, state=state)
             request.session["state"] = state
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+                params["next_path"] = str(validate_next_path(next_path))
+            url = urljoin(base_host(request=request, is_space=True), "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
 
@@ -65,6 +56,7 @@ class OIDCCallbackSpaceEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
         state = request.GET.get("state")
+        base_host_url = request.session.get("host") or "https://plane.design4paragon.com"
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
@@ -74,8 +66,8 @@ class OIDCCallbackSpaceEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+                params["next_path"] = str(next_path)
+            url = urljoin(base_host_url, "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         if not code:
@@ -86,23 +78,22 @@ class OIDCCallbackSpaceEndpoint(View):
             params = exc.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = urljoin(base_host_url, "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
         try:
-            provider = OIDC_OAUTH_PROVIDER_ERROR(request=request, code=code)
+            provider = OIDCOAuthProvider(request=request, code=code, callback=post_user_auth_workflow)
             user = provider.authenticate()
-            # Login the user and record his device info
             user_login(request=request, user=user, is_space=True)
-            # Process workspace and project invitations
-            # redirect to referer path
-            url = (
-                f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
-            )
+            if next_path:
+                path = str(validate_next_path(next_path))
+            else:
+                path = get_redirection_path(user=user)
+            url = urljoin(base_host_url, path)
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
                 params["next_path"] = str(validate_next_path(next_path))
-            url = f"{base_host(request=request, is_space=True)}?{urlencode(params)}"
+            url = urljoin(base_host_url, "?" + urlencode(params))
             return HttpResponseRedirect(url)

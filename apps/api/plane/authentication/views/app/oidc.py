@@ -56,7 +56,7 @@ class OIDCCallbackEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
         state = request.GET.get("state")
-        base_host_url = request.session.get("host")
+        base_host_url = request.session.get("host") or "https://plane.design4paragon.com"
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
