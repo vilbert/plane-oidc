@@ -216,3 +216,30 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
         instance.is_signup_screen_visited = True
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+class InstanceUsersEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    def get(self, request):
+        from plane.db.models import User
+        users = User.objects.all().order_by("-date_joined").values(
+            "id", "email", "first_name", "last_name", 
+            "is_active", "date_joined", "last_login"
+        )
+        return Response({"results": list(users)}, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        from plane.db.models import User
+        user = User.objects.get(pk=pk)
+        user.is_active = request.data.get("is_active", user.is_active)
+        user.save()
+        return Response({"id": str(user.id), "is_active": user.is_active}, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        from plane.db.models import User
+        from django.db import connection
+        user = User.objects.get(pk=pk)
+        with connection.cursor() as cursor:
+            cursor.execute("SET session_replication_role = replica")
+            user.delete()
+            cursor.execute("SET session_replication_role = DEFAULT")
+        return Response(status=status.HTTP_204_NO_CONTENT)
