@@ -413,6 +413,6 @@ class Adapter:
             self.create_update_account(user=user)
         # Auto-join default workspace for new OIDC users
         if is_signup and self.provider == "oidc":
-            self.__auto_join_default_workspace(user=user) 
-          # Return user
-          return user
+            self.__auto_join_default_workspace(user=user)
+        # Return user
+        return user
