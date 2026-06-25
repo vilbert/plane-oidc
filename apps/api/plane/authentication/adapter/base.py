@@ -409,10 +409,10 @@ class Adapter:
             self.callback(user, is_signup, self.request)
 
         # Create or update account if token data is present
-          if self.token_data:
-              self.create_update_account(user=user)
-          # Auto-join default workspace for new OIDC users
-          if is_signup and self.provider == "oidc":
-              self.__auto_join_default_workspace(user=user)
+        if self.token_data:
+            self.create_update_account(user=user)
+        # Auto-join default workspace for new OIDC users
+        if is_signup and self.provider == "oidc":
+            self.__auto_join_default_workspace(user=user) 
           # Return user
           return user
