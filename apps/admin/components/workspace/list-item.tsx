@@ -9,6 +9,7 @@ import { WEB_BASE_URL } from "@plane/constants";
 import { NewTabIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { ToggleSwitch } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store";
 import { useInstance } from "@/hooks/store";
@@ -26,9 +27,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
   const isAutoJoin = autoJoinSlugs.includes(workspace?.slug ?? "");
   if (!workspace) return null;
 
-  const handleAutoJoinToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleAutoJoinToggle = async () => {
     let newSlugs: string[];
     if (isAutoJoin) {
       newSlugs = autoJoinSlugs.filter(s => s !== workspace.slug);
@@ -39,7 +38,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
     setToast({
       type: TOAST_TYPE.SUCCESS,
       title: "Saved",
-      message: isAutoJoin ? "Auto-join disabled." : `New users will auto-join ${workspace.name}.`,
+      message: isAutoJoin ? "Auto-assign disabled." : `New users will auto-join ${workspace.name}.`,
     });
   };
 
@@ -103,20 +102,16 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
           <NewTabIcon width={14} height={16} className="text-placeholder group-hover:text-secondary" />
         </div>
       </a>
-      <div className="w-20 flex justify-center flex-shrink-0">
-        <div
-          onClick={isWorkspaceCreationDisabled ? handleAutoJoinToggle : undefined}
-          className={`flex items-center justify-center h-4 w-4 ${isWorkspaceCreationDisabled ? "cursor-pointer" : "cursor-not-allowed opacity-30"}`}
-          title={!isWorkspaceCreationDisabled ? "Enable Prevent workspace creation first" : isAutoJoin ? "Disable auto-join" : "Enable auto-join for new users"}
-        >
-          <input
-            type="checkbox"
-            checked={isAutoJoin}
-            onChange={() => {}}
-            disabled={!isWorkspaceCreationDisabled}
-            className={`h-3.5 w-3.5 accent-accent-primary ${isWorkspaceCreationDisabled ? "cursor-pointer" : "cursor-not-allowed"}`}
-          />
-        </div>
+      <div
+        className="w-20 flex justify-center flex-shrink-0"
+        title={!isWorkspaceCreationDisabled ? "Enable 'Prevent workspace creation' first" : isAutoJoin ? "Disable auto-assign" : "Enable auto-assign for new users"}
+      >
+        <ToggleSwitch
+          value={isAutoJoin}
+          onChange={isWorkspaceCreationDisabled ? handleAutoJoinToggle : () => {}}
+          size="sm"
+          disabled={!isWorkspaceCreationDisabled}
+        />
       </div>
     </div>
   );

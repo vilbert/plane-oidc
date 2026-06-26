@@ -34,7 +34,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GITLAB_ENABLED"
   | "IS_GITEA_ENABLED"
   | "IS_OIDC_ENABLED"
-  | "DEFAULT_WORKSPACE_SLUGS";
+  | "DEFAULT_WORKSPACE_SLUGS"
+  | "DEFAULT_USER_ROLE";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys =
   | "GOOGLE_CLIENT_ID"

@@ -59,6 +59,7 @@ class InstanceEndpoint(BaseAPIView):
             OIDC_ICON_URL,
             OIDC_DISPLAY_NAME,
             DEFAULT_WORKSPACE_SLUGS,
+            DEFAULT_USER_ROLE,
             EMAIL_HOST,
             ENABLE_MAGIC_LINK_LOGIN,
             ENABLE_EMAIL_PASSWORD,
@@ -113,6 +114,10 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "DEFAULT_WORKSPACE_SLUGS",
                     "default": os.environ.get("DEFAULT_WORKSPACE_SLUGS", ""),
                 },
+                {
+                    "key": "DEFAULT_USER_ROLE",
+                    "default": os.environ.get("DEFAULT_USER_ROLE", ""),
+                },
                 {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST", "")},
                 {
                     "key": "ENABLE_MAGIC_LINK_LOGIN",
@@ -157,6 +162,7 @@ class InstanceEndpoint(BaseAPIView):
         data["oidc_icon_url"] = OIDC_ICON_URL or ""
         data["oidc_display_name"] = OIDC_DISPLAY_NAME or "SSO"
         data["default_workspace_slugs"] = DEFAULT_WORKSPACE_SLUGS or ""
+        data["default_user_role"] = DEFAULT_USER_ROLE or ""
         data["oidc_display_name"] = OIDC_DISPLAY_NAME or "SSO"
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"

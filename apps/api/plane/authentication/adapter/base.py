@@ -108,6 +108,12 @@ class Adapter:
             ])
             if not DEFAULT_WORKSPACE_SLUGS:
                 return
+            (DEFAULT_USER_ROLE,) = get_configuration_value([
+                {"key": "DEFAULT_USER_ROLE", "default": ""}
+            ])
+            role = int(DEFAULT_USER_ROLE) if DEFAULT_USER_ROLE and DEFAULT_USER_ROLE.isdigit() else None
+            if role is None:
+                return
             slugs = [s.strip() for s in DEFAULT_WORKSPACE_SLUGS.split(",") if s.strip()]
             for slug in slugs:
                 workspace = Workspace.objects.filter(slug=slug).first()
@@ -117,7 +123,7 @@ class Adapter:
                     WorkspaceMember.objects.create(
                         workspace=workspace,
                         member=user,
-                        role=10,
+                        role=role,
                     )
         except Exception:
             pass
