@@ -38,11 +38,11 @@ Pre-built images on GitHub Container Registry, updated on every push to `preview
 
 | Service | Image |
 |---|---|
-| Backend | `ghcr.io/jiyang1018/plane-backend-oidc:preview` |
-| Web | `ghcr.io/jiyang1018/plane-web-oidc:preview` |
-| Admin | `ghcr.io/jiyang1018/plane-admin-oidc:preview` |
-| Space | `ghcr.io/jiyang1018/plane-space-oidc:preview` |
-| Live | `ghcr.io/jiyang1018/plane-live-oidc:preview` |
+| Backend | `ghcr.io/vilbert/plane-backend-oidc:preview` |
+| Web | `ghcr.io/vilbert/plane-web-oidc:preview` |
+| Admin | `ghcr.io/vilbert/plane-admin-oidc:preview` |
+| Space | `ghcr.io/vilbert/plane-space-oidc:preview` |
+| Live | `ghcr.io/vilbert/plane-live-oidc:preview` |
 
 Use the official `makeplane` images for `proxy`, `db`, `redis`, `minio`, and `mq` — they are unchanged.
 
