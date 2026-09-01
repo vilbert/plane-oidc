@@ -113,6 +113,7 @@ INSTALLED_APPS = [
     "plane.authentication",
     # Third-party things
     "rest_framework",
+    "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
 ]
@@ -155,6 +156,22 @@ API_KEY_RATE_LIMIT = os.environ.get("API_KEY_RATE_LIMIT", "60/minute")
 
 # Django Auth Backend
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)  # default
+
+# OAuth 2 provider settings. Community Edition uses this authorization server
+# for per-user MCP connections. Applications are registered explicitly with
+# the register_mcp_oauth_application management command.
+OAUTH2_PROVIDER = {
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
+    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
+    "ROTATE_REFRESH_TOKEN": True,
+    "PKCE_REQUIRED": True,
+    "SCOPES": {
+        "read": "Read Plane data",
+        "write": "Create and update Plane data",
+    },
+    "DEFAULT_SCOPES": ["read", "write"],
+    "OAUTH2_VALIDATOR_CLASS": "plane.authentication.oauth.validator.PlaneOAuth2Validator",
+}
 
 # Root Urls
 ROOT_URLCONF = "plane.urls"

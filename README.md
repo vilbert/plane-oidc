@@ -26,6 +26,16 @@ Plane Community Edition does not support OIDC/SSO. This fork adds it.
 - OIDC users bypass the signup restriction — existing accounts log in normally, new accounts are created automatically
 - Works with any OIDC-compliant provider: Authentik, Keycloak, Nextcloud, Azure AD, etc.
 
+### OAuth for the Plane MCP server
+This fork also exposes Plane's OAuth authorization-server endpoints to Community Edition, so a remote
+[Plane MCP server](https://github.com/makeplane/plane-mcp-server) can authenticate each user without a shared PAT.
+
+- Authorization, token, revocation, and installation endpoints under `/auth/o/`
+- Authorization-code flow with PKCE and rotating refresh tokens
+- A consent screen that binds every token to one workspace
+- Bearer-token support on `/api/v1/`, restricted to the authorized workspace
+- CLI-based confidential client registration (the client secret is shown only once)
+
 ### God Mode enhancements
 - **Members page** (`/god-mode/members/`) — list all users, activate/deactivate/delete
 - **Auto Assign workspaces** — in the Workspaces page, check which workspaces new OIDC users are automatically added to (supports multiple). Only visible when "Prevent workspace creation" is enabled.
@@ -75,6 +85,31 @@ If your OIDC provider is on the same local network as Plane, add `extra_hosts` t
     extra_hosts:
       - "your-oidc-domain.com:your-server-ip"
 ```
+
+### 4. Register and configure a remote MCP server
+
+Run the registration command in the Plane API container. Its redirect URI is the MCP server's public base URL,
+the `/http` mount used by the official server, and its OAuth callback path:
+
+```bash
+python manage.py register_mcp_oauth_application \
+  --name "Plane MCP Server" \
+  --redirect-uri "https://mcp.example.com/http/auth/callback"
+```
+
+Copy the emitted client ID and client secret into the MCP server environment:
+
+```dotenv
+PLANE_BASE_URL=https://plane.example.com
+PLANE_INTERNAL_BASE_URL=http://api:8000
+PLANE_OAUTH_PROVIDER_BASE_URL=https://mcp.example.com
+PLANE_OAUTH_PROVIDER_CLIENT_ID=<emitted-client-id>
+PLANE_OAUTH_PROVIDER_CLIENT_SECRET=<emitted-client-secret>
+```
+
+The Plane and MCP public URLs must use HTTPS outside local development. After starting the MCP server, connect
+the MCP client to `https://mcp.example.com/http/mcp`; the browser flow will ask the user to select one of their
+Plane workspaces.
 
 ---
 
