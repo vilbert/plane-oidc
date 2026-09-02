@@ -4,6 +4,17 @@ on:
   push:
     branches:
       - preview
+    paths:
+      - "apps/api/**"
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "pnpm-workspace.yaml"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - "Dockerfile*"
   workflow_dispatch:
 
 concurrency:

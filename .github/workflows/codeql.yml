@@ -4,8 +4,28 @@ on:
   workflow_dispatch:
   push:
     branches: ["preview", "canary", "master"]
+    paths:
+      - "apps/api/**"
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "**/*.py"
+      - "**/*.ts"
+      - "**/*.tsx"
   pull_request:
     branches: ["preview", "canary", "master"]
+    paths:
+      - "apps/api/**"
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "**/*.py"
+      - "**/*.ts"
+      - "**/*.tsx"
 
 jobs:
   analyze:

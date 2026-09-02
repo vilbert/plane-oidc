@@ -15,6 +15,8 @@
 </p>
 
 > This is a fork of [makeplane/plane](https://github.com/makeplane/plane) with OIDC/SSO support added to the Community Edition. For general Plane documentation, see the [official docs](https://docs.plane.so/).
+>
+> This fork is based on [jiyang1018/plane-oidc](https://github.com/jiyang1018/plane-oidc).
 
 ## 🔐 What's different in this fork
 
@@ -168,6 +170,7 @@ For PAT-based auth (no browser flow, no OAuth), use the `/http/api-key/mcp` endp
 ## ✅ Tested with
 - Nextcloud (with OIDC provider app)
 - Authentik
+- Keycloak
 
 ---
 
