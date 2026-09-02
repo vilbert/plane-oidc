@@ -86,30 +86,82 @@ If your OIDC provider is on the same local network as Plane, add `extra_hosts` t
       - "your-oidc-domain.com:your-server-ip"
 ```
 
-### 4. Register and configure a remote MCP server
+### 4. Bundle the MCP server (optional)
 
-Run the registration command in the Plane API container. Its redirect URI is the MCP server's public base URL,
-the `/http` mount used by the official server, and its OAuth callback path:
+The [upstream `makeplane/plane-mcp-server`](https://github.com/makeplane/plane-mcp-server) (MIT) is included as a pre-built sidecar container. It starts automatically with `docker compose up` and is reachable at the same domain under `/http/`:
+
+| Transport | URL |
+|---|---|
+| OAuth (per-user) | `https://plane.example.com/http/mcp` |
+| Personal Access Token | `https://plane.example.com/http/api-key/mcp` |
+
+#### 4a. Register the OAuth client (once)
+
+Fill in the three MCP URL vars in `.env` first, then run:
 
 ```bash
-python manage.py register_mcp_oauth_application \
+docker compose exec api python manage.py register_mcp_oauth_application \
   --name "Plane MCP Server" \
-  --redirect-uri "https://mcp.example.com/http/auth/callback"
+  --redirect-uri "${MCP_OAUTH_PROVIDER_BASE_URL}/auth/callback"
 ```
 
-Copy the emitted client ID and client secret into the MCP server environment:
+Copy the emitted client ID and client secret into `.env`:
 
 ```dotenv
-PLANE_BASE_URL=https://plane.example.com
-PLANE_INTERNAL_BASE_URL=http://api:8000
-PLANE_OAUTH_PROVIDER_BASE_URL=https://mcp.example.com
-PLANE_OAUTH_PROVIDER_CLIENT_ID=<emitted-client-id>
-PLANE_OAUTH_PROVIDER_CLIENT_SECRET=<emitted-client-secret>
+PLANE_OAUTH_PROVIDER_CLIENT_ID=<client-id>
+PLANE_OAUTH_PROVIDER_CLIENT_SECRET=<client-secret>
+MCP_PLANE_PUBLIC_URL=https://plane.example.com
+MCP_PLANE_INTERNAL_URL=http://api:8000
+MCP_OAUTH_PROVIDER_BASE_URL=https://plane.example.com/http
 ```
 
-The Plane and MCP public URLs must use HTTPS outside local development. After starting the MCP server, connect
-the MCP client to `https://mcp.example.com/http/mcp`; the browser flow will ask the user to select one of their
-Plane workspaces.
+Then restart the container to pick up the new env:
+
+```bash
+docker compose up -d mcp-server
+```
+
+#### 4b. Connect an MCP client
+
+Point your MCP client at the OAuth endpoint:
+
+```json
+{
+  "mcpServers": {
+    "plane": {
+      "command": "npx",
+      "args": ["mcp-remote@latest", "https://plane.example.com/http/mcp"]
+    }
+  }
+}
+```
+
+The browser will open the Plane OAuth consent screen where the user picks one of their workspaces. The access token is workspace-scoped and rotated automatically.
+
+For PAT-based auth (no browser flow, no OAuth), use the `/http/api-key/mcp` endpoint instead and supply your [Plane API token](https://docs.plane.so/) in the request headers:
+
+```json
+{
+  "mcpServers": {
+    "plane": {
+      "command": "npx",
+      "args": ["mcp-remote@latest", "https://plane.example.com/http/api-key/mcp"],
+      "headers": {
+        "Authorization": "Bearer <your-pat>",
+        "X-Workspace-slug": "<your-workspace-slug>"
+      }
+    }
+  }
+}
+```
+
+> **Upgrading the MCP server:** pin the image tag in `docker-compose.yml` (`image: makeplane/plane-mcp-server:<tag>`) for reproducible deploys. To upgrade, change the tag and `docker compose pull mcp-server && docker compose up -d mcp-server`.
+>
+> **Self-hosted OIDC alongside:** if your OIDC provider is on the same local network as Plane, add `extra_hosts` to the `mcp-server` service in `docker-compose.yml`:
+> ```yaml
+>     extra_hosts:
+>       - "your-oidc-domain.com:your-server-ip"
+> ```
 
 ---
 
